@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>דשבורד אינסטגרם — @avielamira</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c27;
+    --border: #2a2a3a;
+    --accent: #c8a96e;
+    --accent2: #7b5ea7;
+    --accent3: #3d9970;
+    --danger: #e74c3c;
+    --text: #f0ede8;
+    --muted: #7a7a8c;
+    --viral: #f39c12;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px 0;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0d0d1a 0%, #1a1025 50%, #0d1a15 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 48px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(200,169,110,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .handle { font-size: 13px; color: var(--accent); letter-spacing: 1px; margin-bottom: 4px; }
+  .name { font-size: 22px; font-weight: 700; }
+  .niche-tag {
+    display: inline-block;
+    background: rgba(200,169,110,0.12);
+    border: 1px solid rgba(200,169,110,0.3);
+    color: var(--accent);
+    padding: 3px 12px; border-radius: 20px;
+    font-size: 12px; letter-spacing: 0.5px;
+    margin-top: 6px;
+  }
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+  .kpi {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    position: relative;
+  }
+  .kpi-label { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 6px; }
+  .kpi-value { font-size: 26px; font-weight: 700; line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .kpi.gold .kpi-value { color: var(--accent); }
+  .kpi.purple .kpi-value { color: var(--accent2); }
+  .kpi.green .kpi-value { color: var(--accent3); }
+  .kpi.orange .kpi-value { color: var(--viral); }
+
+  /* LAYOUT */
+  .container { max-width: 1400px; margin: 0 auto; padding: 32px 48px; }
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+  .grid-6-4 { display: grid; grid-template-columns: 6fr 4fr; gap: 24px; margin-bottom: 28px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  /* CHART CONTAINERS */
+  .chart-wrap { position: relative; }
+
+  /* TOP POSTS TABLE */
+  .posts-table { width: 100%; border-collapse: collapse; }
+  .posts-table th {
+    font-size: 10px; letter-spacing: 1px; color: var(--muted);
+    text-transform: uppercase; padding: 8px 12px;
+    text-align: right; border-bottom: 1px solid var(--border);
+  }
+  .posts-table td {
+    padding: 10px 12px; font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  .posts-table tr:hover td { background: rgba(255,255,255,0.03); }
+  .views-bar-bg {
+    height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px;
+    margin-top: 4px; min-width: 60px;
+  }
+  .views-bar { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--viral)); }
+  .rank-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-size: 11px; font-weight: 700;
+  }
+  .rank-1 { background: linear-gradient(135deg, #f39c12, #e67e22); color: #000; }
+  .rank-2 { background: linear-gradient(135deg, #bdc3c7, #95a5a6); color: #000; }
+  .rank-3 { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
+  .rank-other { background: rgba(255,255,255,0.08); color: var(--muted); }
+  .category-tag {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600;
+  }
+  .cat-humor { background: rgba(230,126,34,0.15); color: #e67e22; border: 1px solid rgba(230,126,34,0.3); }
+  .cat-transform { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.3); }
+  .cat-food { background: rgba(231,76,60,0.15); color: #e74c3c; border: 1px solid rgba(231,76,60,0.3); }
+  .cat-mindset { background: rgba(155,89,182,0.15); color: #9b59b6; border: 1px solid rgba(155,89,182,0.3); }
+  .cat-edu { background: rgba(52,152,219,0.15); color: #3498db; border: 1px solid rgba(52,152,219,0.3); }
+  .cat-collab { background: rgba(200,169,110,0.15); color: var(--accent); border: 1px solid rgba(200,169,110,0.3); }
+  .viral-badge {
+    background: rgba(243,156,18,0.15);
+    color: var(--viral);
+    border: 1px solid rgba(243,156,18,0.3);
+    padding: 1px 6px; border-radius: 8px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+    margin-right: 4px;
+  }
+
+  /* HOOK PATTERNS */
+  .hook-list { list-style: none; }
+  .hook-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .hook-num {
+    flex-shrink: 0; width: 24px; height: 24px;
+    border-radius: 6px; background: rgba(200,169,110,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--accent);
+  }
+  .hook-text { font-size: 13px; line-height: 1.5; }
+  .hook-example { font-size: 11px; color: var(--muted); margin-top: 2px; font-style: italic; }
+  .hook-score { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px; margin-right:6px; vertical-align:middle; }
+  .score-high { background:rgba(46,204,113,0.15); color:#2ecc71; }
+  .score-mid { background:rgba(241,196,15,0.15); color:#f1c40f; }
+  .score-low { background:rgba(231,76,60,0.15); color:#e74c3c; }
+  .hook-formula { font-size:12px; color:var(--text); margin-top:4px; padding:6px 10px; background:rgba(255,255,255,0.04); border-radius:8px; line-height:1.6; }
+  .hook-ready { font-size:12px; color:#2ecc71; margin-top:4px; line-height:1.5; }
+
+  /* IDEAS */
+  .idea-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .idea-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .idea-num { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+  .idea-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .idea-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* STRATEGY */
+  .strategy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .strategy-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .strategy-icon { font-size: 22px; margin-bottom: 10px; }
+  .strategy-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--accent); }
+  .strategy-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* GROWTH CALCULATOR */
+  .calc-section {
+    background: linear-gradient(135deg, rgba(200,169,110,0.05), rgba(123,94,167,0.05));
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 16px; padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+  .calc-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+  .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  .calc-box {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .calc-label { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 6px; }
+  .calc-val { font-size: 22px; font-weight: 700; color: var(--accent); }
+  .calc-unit { font-size: 11px; color: var(--muted); }
+  .calc-controls { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 20px; }
+  .calc-field { display: flex; flex-direction: column; gap: 6px; }
+  .calc-field label { font-size: 11px; color: var(--muted); }
+  .calc-field input, .calc-field select {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    width: 160px;
+    outline: none;
+    direction: ltr;
+    text-align: center;
+  }
+  .calc-field input:focus { border-color: var(--accent); }
+  .calc-btn {
+    background: linear-gradient(135deg, var(--accent), #a07840);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .calc-btn:hover { opacity: 0.85; }
+  .timeline { display: flex; gap: 0; margin-top: 8px; overflow-x: auto; }
+  .timeline-step {
+    flex: 1; min-width: 80px;
+    text-align: center;
+    padding: 10px 4px;
+    position: relative;
+  }
+  .timeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 100%;
+    transform: translateY(-50%);
+    width: 100%; height: 1px;
+    background: var(--border);
+  }
+  .ts-month { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+  .ts-val { font-size: 15px; font-weight: 700; color: var(--accent); }
+
+  /* INSIGHTS */
+  .insight-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .insight {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .insight-icon { font-size: 20px; flex-shrink: 0; }
+  .insight-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .insight-body { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .insight.win .insight-icon { filter: none; }
+  .insight.warn { border-color: rgba(231,76,60,0.3); }
+  .insight.warn .insight-title { color: var(--danger); }
+
+  /* TAB NAV */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab {
+    padding: 8px 18px; border-radius: 8px; font-size: 12px;
+    cursor: pointer; border: 1px solid var(--border);
+    background: transparent; color: var(--muted);
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    background: rgba(200,169,110,0.12);
+    border-color: rgba(200,169,110,0.4);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* PIE LEGEND */
+  .pie-legend { display: flex; flex-direction: column; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-pct { margin-right: auto; color: var(--muted); font-size: 11px; }
+
+  @media (max-width: 900px) {
+    .kpis { grid-template-columns: repeat(3, 1fr); }
+    .grid-2, .grid-3, .grid-6-4 { grid-template-columns: 1fr; }
+    .calc-grid { grid-template-columns: repeat(2, 1fr); }
+    .strategy-grid { grid-template-columns: 1fr 1fr; }
+    .idea-grid { grid-template-columns: 1fr; }
+    .container { padding: 24px 20px; }
+    .header { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="avatar">א</div>
+    <div>
+      <div class="handle">@avielamira</div>
+      <div class="name">Aviel Amira Wnbf Pro</div>
+      <div class="niche-tag">כושר · תזונה · הומור · WNBF Pro</div>
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi gold">
+      <div class="kpi-label">עוקבים נוכחי</div>
+      <div class="kpi-value">2,475</div>
+      <div class="kpi-sub">יעד: 16,000</div>
+    </div>
+    <div class="kpi orange">
+      <div class="kpi-label">שיא צפיות (רגיל)</div>
+      <div class="kpi-value">292K</div>
+      <div class="kpi-sub">ויראלי בודד</div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-label">ממוצע צפיות</div>
+      <div class="kpi-value">~6,200</div>
+      <div class="kpi-sub">ללא ויראלים</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Reach Ratio</div>
+      <div class="kpi-value">2.5×</div>
+      <div class="kpi-sub">מעוקבים בלבד</div>
+    </div>
+    <div class="kpi gold">
+      <div class="kpi-label">רילס שנותחו</div>
+      <div class="kpi-value">60+</div>
+      <div class="kpi-sub">6 חודשים אחרונים</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('overview')">סקירה</button>
+    <button class="tab" onclick="switchTab('toptable')">פוסטים מובילים</button>
+    <button class="tab" onclick="switchTab('hooks')">תבניות הוק</button>
+    <button class="tab" onclick="switchTab('ideas')">10 רעיונות</button>
+    <button class="tab" onclick="switchTab('strategy')">אסטרטגיה</button>
+    <button class="tab" onclick="switchTab('growth')">מחשבון צמיחה</button>
+    <button class="tab" onclick="switchTab('checkin')">✅ צ'ק-אין שבועי</button>
+  </div>
+
+  <!-- ============ TAB: OVERVIEW ============ -->
+  <div id="tab-overview" class="tab-content active">
+
+    <div class="grid-6-4">
+      <!-- Bar chart -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> צפיות לפי רילס — מובילים (ללא חריגים)</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="chartBar"></canvas>
+        </div>
+      </div>
+      <!-- Pie chart -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> התפלגות קטגוריות</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center">
+          <div class="chart-wrap" style="height:180px">
+            <canvas id="chartPie"></canvas>
+          </div>
+          <div class="pie-legend" id="pieLegend"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Viral outliers -->
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--viral)"></span> ויראלים בולטים — חריגים</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;font-weight:800;color:var(--viral);min-width:60px">292K</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">תוכן אנטומי/שרירי — מידע ויזואלי</div>
+              <div style="font-size:11px;color:var(--muted)">118× יותר מעוקבים · הכי ויראלי בחשבון</div>
+              <div class="views-bar-bg"><div class="views-bar" style="width:100%"></div></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;font-weight:800;color:var(--viral);min-width:60px">167K</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">לפני שנה מהיום — טרנספורמציה (Pinned)</div>
+              <div style="font-size:11px;color:var(--muted)">67× · הוכחה חיה שהמסע עובד</div>
+              <div class="views-bar-bg"><div class="views-bar" style="width:57%"></div></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;font-weight:800;color:var(--accent);min-width:60px">51.1K</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">סיפור אישי / כנות עצמית (טקסט כבד)</div>
+              <div style="font-size:11px;color:var(--muted)">21× · תוכן אמוציונלי שפרץ</div>
+              <div class="views-bar-bg"><div class="views-bar" style="width:17%"></div></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;font-weight:800;color:var(--accent);min-width:60px">49.1K</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">מיכל vs רות — הומור + כאן FOMO</div>
+              <div style="font-size:11px;color:var(--muted)">20× · שיתוף פעולה עם ערוץ גדול</div>
+              <div class="views-bar-bg"><div class="views-bar" style="width:16.8%"></div></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;font-weight:800;color:var(--accent);min-width:60px">46.5K</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">תוכן מוטיבציה/מיינדסט גבוה</div>
+              <div style="font-size:11px;color:var(--muted)">19× · מסר חזק עם ביצוע חזותי</div>
+              <div class="views-bar-bg"><div class="views-bar" style="width:15.9%"></div></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;font-weight:800;color:var(--accent3);min-width:60px">34.3K</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">תתזוז. לחץ בבקשה — הומור מכון</div>
+              <div style="font-size:11px;color:var(--muted)">14× · סיטואציה שכולם מכירים</div>
+              <div class="views-bar-bg"><div class="views-bar" style="width:11.7%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key insights -->
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--accent3)"></span> תובנות מפתח</div>
+        <div class="insight-row">
+          <div class="insight win">
+            <div class="insight-icon">🎯</div>
+            <div>
+              <div class="insight-title">הומור = מנוע צמיחה</div>
+              <div class="insight-body">3 מתוך 6 הויראלים הגדולים הם הומור. הצחוק מוביל ל-Share והשיתוף מביא עוקבים.</div>
+            </div>
+          </div>
+          <div class="insight win">
+            <div class="insight-icon">🔥</div>
+            <div>
+              <div class="insight-title">ביצוע ממוצע = 2.5× עוקבים</div>
+              <div class="insight-body">~6,200 צפיות ממוצע לפוסט רגיל = רילס מגיעים גם לא-עוקבים. אלגוריתם עובד בשבילך.</div>
+            </div>
+          </div>
+        </div>
+        <div class="insight-row">
+          <div class="insight win">
+            <div class="insight-icon">💡</div>
+            <div>
+              <div class="insight-title">טרנספורמציות + כנות = 100K+</div>
+              <div class="insight-body">167K + 51K = שתי הפסגות הגדולות מגיעות מלהראות אמת. לא תחרויות — חיים.</div>
+            </div>
+          </div>
+          <div class="insight warn">
+            <div class="insight-icon">⚠️</div>
+            <div>
+              <div class="insight-title">סדרת "60 ימים" = עייפות</div>
+              <div class="insight-body">יומי הסדרה נעצרים ב-1,900-2,900 צפיות. תוכן שחוזר ביומיומיות מאבד עניין.</div>
+            </div>
+          </div>
+        </div>
+        <div class="insight-row">
+          <div class="insight win">
+            <div class="insight-icon">🤝</div>
+            <div>
+              <div class="insight-title">קולאב = ×20 reach</div>
+              <div class="insight-body">שיתוף כאן FOMO הביא 49K. שיתופי פעולה עם ערוצים גדולים = הקיצור הכי מהיר.</div>
+            </div>
+          </div>
+          <div class="insight warn">
+            <div class="insight-icon">📉</div>
+            <div>
+              <div class="insight-title">תוכן גנרי = מתחת לממוצע</div>
+              <div class="insight-body">תוספים (3.7K), מאכלי חג (3.8K), השוואות אוכל בלי זווית — נכשלים עקביות.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ TAB: TOP TABLE ============ -->
+  <div id="tab-toptable" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> 20 הרילס המובילים — 6 חודשים אחרונים</div>
+      <table class="posts-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>הוק / כותרת</th>
+            <th>קטגוריה</th>
+            <th>צפיות</th>
+            <th>ביצועים</th>
+          </tr>
+        </thead>
+        <tbody id="postsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ TAB: HOOKS ============ -->
+  <div id="tab-hooks" class="tab-content">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> 8 תבניות הוק שעבדו לך — עם ציון ודוגמה מוכנה</div>
+        <ul class="hook-list">
+          <li class="hook-item">
+            <div class="hook-num">1</div>
+            <div>
+              <div class="hook-text">🕐 "לפני שנה מהיום..." — ציר זמן אישי <span class="hook-score score-high">ציון 10/10</span></div>
+              <div class="hook-example">הוכחה אצלך: "לפני שנה מהיום" — 167K צפיות (פי 30 מהממוצע שלך)</div>
+              <div class="hook-formula">📐 הנוסחה: [נקודת זמן בעבר] + [איפה היית] מול [איפה אתה היום]. הצופה חייב לראות את הסוף.</div>
+              <div class="hook-ready">✍️ דוגמה מוכנה לשימוש: "לפני שנתיים לא הייתי מעז להוריד חולצה בים. היום אני על במה."</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num">2</div>
+            <div>
+              <div class="hook-text">🙏 וידוי אישי / כנות חשופה <span class="hook-score score-high">ציון 9/10</span></div>
+              <div class="hook-example">הוכחה אצלך: הסיפור האישי — 51K · "אני תקוע בין גאה בעצמי..."</div>
+              <div class="hook-formula">📐 הנוסחה: להודות במשהו שמאמנים "לא אמורים" להגיד. חולשה אמיתית = חיבור אמיתי.</div>
+              <div class="hook-ready">✍️ דוגמה מוכנה: "אני מאמן כושר, ויש ימים שאני שונא ללכת להתאמן. הנה מה שאני עושה בהם."</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num">3</div>
+            <div>
+              <div class="hook-text">⚔️ X נגד Y — עימות מצחיק <span class="hook-score score-high">ציון 9/10</span></div>
+              <div class="hook-example">הוכחה אצלך: "מיכל vs רות" — 49K · "תתזוז. לחץ בבקשה" — 34K</div>
+              <div class="hook-formula">📐 הנוסחה: שתי דמויות/גישות מתנגשות על משהו שכל מתאמן מכיר. ההומור עושה את השיתופים.</div>
+              <div class="hook-ready">✍️ דוגמה מוכנה: "המתאמן שסופר מאקרו vs המתאמן שאוכל 'לפי תחושה'" (אתה משחק את שניהם)</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num">4</div>
+            <div>
+              <div class="hook-text">💣 ניפוץ מיתוס — "כולם טועים בזה" <span class="hook-score score-mid">ציון 7/10</span></div>
+              <div class="hook-example">הוכחה אצלך: "100 קלוריות?!" — 4.7K · "לפי העין" — 6K · "קילו ≠ קילו" — 3.3K</div>
+              <div class="hook-formula">📐 הנוסחה: אמונה נפוצה + הפרכה עם מספר מפתיע ב-3 שניות הראשונות. עובד יציב, לא ויראלי.</div>
+              <div class="hook-ready">✍️ דוגמה מוכנה: "הסלט 'הבריא' שלך בצהריים? 750 קלוריות. יותר מהמבורגר. הנה למה."</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num">5</div>
+            <div>
+              <div class="hook-text">🍔 ג'אנק אהוב + גרסה בריאה <span class="hook-score score-mid">ציון 7/10</span></div>
+              <div class="hook-example">הוכחה אצלך: "נאגטס של מקדונלדס" — 4.7K · "בורקס מפוצץ חלבון!!" — 6.6K</div>
+              <div class="hook-formula">📐 הנוסחה: אוכל שכולם אוהבים ומרגישים אשמים עליו + "ככה עושים אותו בלי להרוס את הדיאטה".</div>
+              <div class="hook-ready">✍️ דוגמה מוכנה: "פיצה של 40 גרם חלבון שנכנסת לך בקלוריות. כן, באמת."</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num">6</div>
+            <div>
+              <div class="hook-text">🛒 מדריך סופר / סל קניות <span class="hook-score score-mid">ציון 6/10</span></div>
+              <div class="hook-example">הוכחה אצלך: "סל קניות זול ומדויק" — 5.1K · "לבחור את הנקניק שלך" — 2.9K</div>
+              <div class="hook-formula">📐 הנוסחה: אתה בסופר, מצלם מוצרים אמיתיים, נותן כלל ברור. תוכן שנשמר ומשותף.</div>
+              <div class="hook-ready">✍️ דוגמה מוכנה: "5 מוצרים בשופרסל שנראים בריאים והם שקר אחד גדול"</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num">7</div>
+            <div>
+              <div class="hook-text">😤 האמת שאף אחד לא אומר <span class="hook-score score-mid">ציון 6/10</span></div>
+              <div class="hook-example">הוכחה אצלך: "Social media:" — 6.5K · "חלק מהאנשים הולכים למכון" — 6.5K</div>
+              <div class="hook-formula">📐 הנוסחה: לחשוף את הפער בין מה שמציגים ברשת למציאות. אתה WNBF Pro — יש לך סמכות להגיד את זה.</div>
+              <div class="hook-ready">✍️ דוגמה מוכנה: "מה שהמשפיען כושר שלך לא מספר לך על התמונות שלו"</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num">8</div>
+            <div>
+              <div class="hook-text">😂 POV — סיטואציה שכולם מכירים <span class="hook-score score-mid">ציון 6/10</span></div>
+              <div class="hook-example">הוכחה אצלך: "Trusting the same hand..." — 4.5K · "כשאתה בא לחוץ לאימון"</div>
+              <div class="hook-formula">📐 הנוסחה: רגע יומיומי מהמכון שכל מתאמן חווה, מוגזם קצת. הצופה מתייג חבר = הפצה חינם.</div>
+              <div class="hook-ready">✍️ דוגמה מוכנה: "POV: אמרת 'סט אחרון' לפני 4 סטים" </div>
+            </div>
+          </li>
+        </ul>
+        <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6">💡 איך הציון מחושב: לפי הצפיות בפועל של הפוסטים שלך בכל תבנית, ביחס לממוצע הערוץ (~5.5K). ירוק = הוכח ויראלי אצלך, צהוב = עובד יציב מעל הממוצע.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--danger)"></span> תבניות שלא עובדות</div>
+        <ul class="hook-list">
+          <li class="hook-item">
+            <div class="hook-num" style="background:rgba(231,76,60,0.15);color:var(--danger)">✗</div>
+            <div>
+              <div class="hook-text">סדרה יומית (יום X/60)</div>
+              <div class="hook-example">1,900-2,900 צפיות בלבד · קהל מאבד עניין אחרי כמה ימים</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num" style="background:rgba(231,76,60,0.15);color:var(--danger)">✗</div>
+            <div>
+              <div class="hook-text">"התוספים שאני לוקח"</div>
+              <div class="hook-example">3,746 · שחוק מדי · כולם עושים את זה</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num" style="background:rgba(231,76,60,0.15);color:var(--danger)">✗</div>
+            <div>
+              <div class="hook-text">חג + עצה תזונתית ("כמה קלוריות במימונה")</div>
+              <div class="hook-example">3,692 · אין דחיפות, אין הומור, אין ייחוד</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num" style="background:rgba(231,76,60,0.15);color:var(--danger)">✗</div>
+            <div>
+              <div class="hook-text">אוכל "בריא" ללא זווית חדשה</div>
+              <div class="hook-example">פרנץ' טוסט 50 גרם, עוגת בננה — 3.7K · חסר הוק רגשי</div>
+            </div>
+          </li>
+          <li class="hook-item">
+            <div class="hook-num" style="background:rgba(231,76,60,0.15);color:var(--danger)">✗</div>
+            <div>
+              <div class="hook-text">שאלות גנריות ללא פאנץ'</div>
+              <div class="hook-example">"לשבוע או לנשנש" 4.8K · חסר מתח, חסר הפתעה</div>
+            </div>
+          </li>
+        </ul>
+
+        <div style="margin-top:20px;padding:14px;background:rgba(200,169,110,0.06);border:1px solid rgba(200,169,110,0.2);border-radius:10px">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">⚡ הנוסחה שחוזרת על עצמה בויראלים שלך</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7">
+            <strong style="color:var(--text)">סיטואציה מוכרת</strong> + <strong style="color:var(--text)">טוויסט מפתיע</strong> + <strong style="color:var(--text)">הסיום שמדליק אנשים לשתף</strong><br>
+            → "מיכל vs רות" → "תתזוז לחץ" → "לפני שנה מהיום"<br>
+            כולם עובדים לפי אותו מנגנון: זיהוי + הפתעה + שיתוף.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: IDEAS ============ -->
+  <div id="tab-ideas" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> 10 רעיונות קונקרטיים — מבוססים על מה שהוכיח את עצמו אצלך</div>
+      <div class="idea-grid">
+        <div class="idea-card">
+          <div class="idea-num">רעיון 01 · הומור מהמכון</div>
+          <div class="idea-title">🏋️ רגעים שרק מאמן כושר מכיר</div>
+          <div class="idea-desc">סרטון מזווית המאמן: הלקוח שאומר "עשיתי דיאטה" ואז שולף בורקס, הלקוח שנעלם שבועיים וחוזר "מאיפה שהפסקנו". ההוק "תתזוז, לחץ בבקשה" הביא לך 34 אלף צפיות — זה בדיוק אותו סגנון. תעשה עוד אחד כזה.</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-num">רעיון 02 · טרנספורמציה</div>
+          <div class="idea-title">📸 שמונה שנים של טעויות מול שנה אחת נכונה</div>
+          <div class="idea-desc">מסך מפוצל: הגוף שלך לפני שהבנת תזונה, מול היום. "לפני שנה מהיום" הביא לך 167 אלף צפיות — הפורמט הזה הוא הנכס הכי גדול שלך. שילוב של מספרים, גוף וכנות.</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-num">רעיון 03 · ניפוץ מיתוס</div>
+          <div class="idea-title">💥 שלושה דברים שמאמנים אומרים לך — והם שקר</div>
+          <div class="idea-desc">הקטגוריה הזאת עובדת לך יציב: "100 קלוריות?!" (4.7 אלף), "לפי העין" (6 אלף). עכשיו תעצים אותה — מספר עגול בכותרת + המילה "שקר" גורמים לאנשים לעצור את הגלילה.</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-num">רעיון 04 · שיתוף פעולה</div>
+          <div class="idea-title">🤝 אימון משותף עם מאמן או ספורטאי מוכר</div>
+          <div class="idea-desc">הסרטון עם מיכל הביא לך 49 אלף צפיות — שיתוף פעולה חושף אותך לקהל של האורח. תעשה אחד בחודש: "מי חזק יותר ?" או אימון אחד-על-אחד בשיטה שלך עם דמות מוכרת.</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-num">רעיון 05 · מדריך סופר</div>
+          <div class="idea-title">🛒 שמונה מוצרי חלבון שכולם קונים — מה באמת שווה?</div>
+          <div class="idea-desc">אתה בסופר, משווה מוצרים אמיתיים עם המספרים ביד. בסוף — קריאה לפעולה: "תגיבו 'רשימה' ואשלח את הרשימה המלאה". ככה הופכים צפיות לתגובות, ותגובות להפצה.</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-num">רעיון 06 · כנות</div>
+          <div class="idea-title">😤 הסיבה האמיתית שלא יורדים במשקל — וזה לא כוח רצון</div>
+          <div class="idea-desc">הסיפור האישי שלך הביא 51 אלף צפיות. הקהל רוצה אמת, לא שלמות. עוד כיוון באותו סגנון: "מה שלא סיפרתי לאף אחד על הדרך לתחרות".</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-num">רעיון 07 · הומור וזהות</div>
+          <div class="idea-title">😂 ששת הטיפוסים שיש בכל מכון בישראל</div>
+          <div class="idea-desc">מיפוי הומוריסטי: זה שתופס מכשיר עם הטלפון, זה שנוהם, זאת שמצלמת סטורי כל סט. כל מי שהיה פעם במכון יתייג חבר — וזאת הפצה בחינם.</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-num">רעיון 08 · גוף ומקצועיות</div>
+          <div class="idea-title">💪 למה השריר הזה לא גדל לך — ואף אחד לא מסביר את זה</div>
+          <div class="idea-desc">הסרטון השרירי-ויזואלי שלך הביא 292 אלף צפיות — הקטגוריה הכי ויראלית שלך. תהפוך את זה לסדרה: פרק על חזה, פרק על כתפיים, פרק על יד אחורית.</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-num">רעיון 09 · משחק ניחושים</div>
+          <div class="idea-title">🤔 כמה קלוריות יש בצלחת הזאת? תנחשו בתגובות</div>
+          <div class="idea-desc">פורמט שמכריח תגובה: מראים צלחת, הצופה מנחש, התשובה בסוף. "לפי העין" (6 אלף) הוכיח שהקהל שלך אוהב את המשחק הזה — עכשיו תן להם לשחק בעצמם.</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-num">רעיון 10 · סדרת דמויות</div>
+          <div class="idea-title">🧠 להמשיך את הסדרה של מיכל — הקהל כבר מכיר אותה</div>
+          <div class="idea-desc">"מיכל נגד רות" הביא 49 אלף צפיות — יש לך דמות שעובדת. סדרה קבועה ("מיכל עושה חיטוב", "מיכל בסופר") בונה קהל שחוזר במיוחד בשביל הדמות. זה מותג בתוך המותג.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: CHECKIN ============ -->
+  <div id="tab-checkin" class="tab-content">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> צ'ק-אין שבועי — 2 דקות, כל יום ראשון</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">1. כמה רילסים העלית השבוע ?</div>
+            <select id="ci-reels" style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:14px">
+              <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+              <option value="3" selected>3 (היעד)</option><option value="4">4</option><option value="5">5+</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">2. אילו תבניות השתמשת ? (סמן כמה שרלוונטי)</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px" id="ci-templates">
+              <label style="font-size:12px;padding:6px 12px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);cursor:pointer"><input type="checkbox" value="דמות/הומור"> דמות / הומור</label>
+              <label style="font-size:12px;padding:6px 12px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);cursor:pointer"><input type="checkbox" value="סיפור אישי"> סיפור אישי / ציר זמן</label>
+              <label style="font-size:12px;padding:6px 12px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);cursor:pointer"><input type="checkbox" value="ניפוץ מיתוס"> ניפוץ מיתוס</label>
+              <label style="font-size:12px;padding:6px 12px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);cursor:pointer"><input type="checkbox" value="מדריך סופר"> מדריך סופר</label>
+              <label style="font-size:12px;padding:6px 12px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);cursor:pointer"><input type="checkbox" value="אחר"> אחר</label>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">3. כמה עוקבים יש לך עכשיו ?</div>
+            <input id="ci-followers" type="number" placeholder="למשל: 2510" style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:14px">
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">4. הפוסט הכי חזק השבוע — כמה צפיות ?</div>
+            <input id="ci-best" type="number" placeholder="למשל: 8500" style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:14px">
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">5. איך הרגשת עם התוכן השבוע ? (1 = תקוע, 10 = בכיף)</div>
+            <input id="ci-mood" type="range" min="1" max="10" value="7" style="width:100%" oninput="document.getElementById('ci-mood-val').textContent=this.value">
+            <div style="text-align:center;font-size:18px;font-weight:700;color:var(--accent)" id="ci-mood-val">7</div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">6. מה עצר אותך השבוע ? (אופציונלי)</div>
+            <input id="ci-blocker" type="text" placeholder="זמן / רעיונות / עריכה / מוטיבציה..." style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:14px">
+          </div>
+          <button onclick="saveCheckin()" style="padding:14px;border-radius:10px;border:none;background:var(--accent);color:#111;font-size:15px;font-weight:700;cursor:pointer">שמור צ'ק-אין ✅</button>
+          <div id="ci-saved" style="display:none;text-align:center;color:#2ecc71;font-size:13px;font-weight:600">נשמר! ההיסטוריה מתעדכנת משמאל ←</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:#2ecc71"></span> ההתקדמות שלך — שבוע אחרי שבוע</div>
+        <div id="ci-history" style="display:flex;flex-direction:column;gap:10px">
+          <div style="color:var(--muted);font-size:13px">עדיין אין צ'ק-אינים. מלא את הראשון ותתחיל לראות את הגרף של עצמך.</div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.2);border-radius:10px;font-size:12px;line-height:1.7;color:var(--muted)">
+          💡 <b style="color:var(--accent)">איך זה עובד:</b> כל יום ראשון קלוד עובר על הנתונים שלך באינסטגרם + על הצ'ק-אין הזה, ומעדכן את הדשבורד עם מסקנות. הצ'ק-אין נשמר בדפדפן שלך — כפתור "העתק סיכום" מכין הודעה מוכנה לשלוח לקלוד.
+        </div>
+        <button onclick="copyCheckinSummary()" style="margin-top:12px;width:100%;padding:12px;border-radius:10px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer">📋 העתק סיכום לשליחה לקלוד</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: STRATEGY ============ -->
+  <div id="tab-strategy" class="tab-content">
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title"><span class="dot"></span> תמהיל תוכן מומלץ — שבועי</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:12px">
+        <div style="text-align:center;padding:16px;background:rgba(230,126,34,0.08);border:1px solid rgba(230,126,34,0.2);border-radius:10px">
+          <div style="font-size:32px;font-weight:800;color:#e67e22">35%</div>
+          <div style="font-size:12px;font-weight:600;color:#e67e22;margin:4px 0">הומור + מוכר</div>
+          <div style="font-size:11px;color:var(--muted)">~1.5 פוסטים/שבוע<br>מנוע ה-Shares שלך</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.2);border-radius:10px">
+          <div style="font-size:32px;font-weight:800;color:#2ecc71">25%</div>
+          <div style="font-size:12px;font-weight:600;color:#2ecc71;margin:4px 0">חינוך + נתונים</div>
+          <div style="font-size:11px;color:var(--muted)">~1 פוסט/שבוע<br>מביא עוקבים רלוונטיים</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(155,89,182,0.08);border:1px solid rgba(155,89,182,0.2);border-radius:10px">
+          <div style="font-size:32px;font-weight:800;color:#9b59b6">25%</div>
+          <div style="font-size:12px;font-weight:600;color:#9b59b6;margin:4px 0">כנות + מיינדסט</div>
+          <div style="font-size:11px;color:var(--muted)">~1 פוסט/שבוע<br>מבנה אמון + brand</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.2);border-radius:10px">
+          <div style="font-size:32px;font-weight:800;color:var(--accent)">15%</div>
+          <div style="font-size:12px;font-weight:600;color:var(--accent);margin:4px 0">קולאבים</div>
+          <div style="font-size:11px;color:var(--muted)">~2x/חודש<br>Reach explosion</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strategy-grid" style="margin-bottom:24px">
+      <div class="strategy-card">
+        <div class="strategy-icon">📅</div>
+        <div class="strategy-title">תדירות</div>
+        <div class="strategy-text">
+          4-5 רילס בשבוע. אל תרד מ-4 — האלגוריתם מענש על דממה. אל תעלה מ-6 — איכות יורדת ועייפות עולה (ראינו בסדרת 60 הימים).
+        </div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-icon">🎭</div>
+        <div class="strategy-title">סגנון</div>
+        <div class="strategy-text">
+          הומור + מקצועיות = שילוב הזהב שלך. אל תוותר על ה"טמטום נטו" — זה מה שגורם לך לבלוט. מאמן שמצחיק = לא-שכיח = עוקבים.
+        </div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-icon">🤝</div>
+        <div class="strategy-title">קולאבים</div>
+        <div class="strategy-text">
+          כאן FOMO = 49K. חפש ערוצים ישראליים עם 10K-100K עוקבים בנישות מקבילות: תזונה, כושר נשים, קומדי. לא מתחרים — משלימים.
+        </div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-icon">🔁</div>
+        <div class="strategy-title">Call to Action</div>
+        <div class="strategy-text">
+          "תגיב נקניק" עבד. תמיד יהיה CTA ספציפי: תגיב X, שתף למישהו שX, שמור לעצמך. כלליים לא עובדים — קונקרטיים כן.
+        </div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-icon">📌</div>
+        <div class="strategy-title">Pinned Posts</div>
+        <div class="strategy-text">
+          3 פינים אסטרטגיים: (1) ויראל שמסביר מי אתה, (2) התוצאה הכי מרשימה שלך / טרנספורמציה, (3) לינק/הצעה. עדכן את השלישי כל רבעון.
+        </div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-icon">💰</div>
+        <div class="strategy-title">מוניטיזציה</div>
+        <div class="strategy-text">
+          ב-5K+ עוקבים: Paid collab + תוכנית ליווי. ב-10K: Digital product (מדריך חיטוב). ב-16K: Community + 1-on-1 premium. בנה pipeline כבר עכשיו.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--accent3)"></span> מפת דרכים לצמיחה — 2,475 → 16,000</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:8px">
+        <div style="padding:20px;border-right:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px">שלב 1 — עכשיו → 5K</div>
+          <div style="font-size:18px;font-weight:700;color:var(--accent);margin-bottom:10px">הכינה</div>
+          <ul style="font-size:12px;color:var(--muted);line-height:2;list-style:none">
+            <li>✦ 5 רילס שבוע</li>
+            <li>✦ 3 קולאבים ראשונים</li>
+            <li>✦ Bio = הצעת ערך ברורה</li>
+            <li>✦ הוק חזק בכל פוסט</li>
+            <li>✦ סדרת ויראל אחת</li>
+          </ul>
+        </div>
+        <div style="padding:20px;border-right:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px">שלב 2 — 5K → 8K</div>
+          <div style="font-size:18px;font-weight:700;color:var(--accent);margin-bottom:10px">המנוע</div>
+          <ul style="font-size:12px;color:var(--muted);line-height:2;list-style:none">
+            <li>✦ Lead magnet ראשון</li>
+            <li>✦ Collab חודשי</li>
+            <li>✦ פינוי "מיכל vs X" קבוע</li>
+            <li>✦ Stories יומיות</li>
+            <li>✦ Duet/Remix</li>
+          </ul>
+        </div>
+        <div style="padding:20px;border-right:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px">שלב 3 — 8K → 12K</div>
+          <div style="font-size:18px;font-weight:700;color:var(--accent);margin-bottom:10px">הפיצ'ר</div>
+          <ul style="font-size:12px;color:var(--muted);line-height:2;list-style:none">
+            <li>✦ תוכן שיוצר תוכן</li>
+            <li>✦ Before/After לקוחות</li>
+            <li>✦ מדריך ייחודי</li>
+            <li>✦ PR בתקשורת ספורט</li>
+            <li>✦ Paid promotion × 2</li>
+          </ul>
+        </div>
+        <div style="padding:20px">
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px">שלב 4 — 12K → 16K</div>
+          <div style="font-size:18px;font-weight:700;color:var(--accent);margin-bottom:10px">המיתוג</div>
+          <ul style="font-size:12px;color:var(--muted);line-height:2;list-style:none">
+            <li>✦ Signature format</li>
+            <li>✦ Series = brand</li>
+            <li>✦ שיתופי פעולה ממותגים</li>
+            <li>✦ Community/Group</li>
+            <li>✦ YouTube cross</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: GROWTH CALC ============ -->
+  <div id="tab-growth" class="tab-content">
+    <div class="calc-section">
+      <div class="calc-title">📈 מחשבון צמיחה — 2,475 → 16,000</div>
+      <div class="calc-controls">
+        <div class="calc-field">
+          <label>עוקבים נוכחיים</label>
+          <input type="number" id="currentFollowers" value="2475">
+        </div>
+        <div class="calc-field">
+          <label>יעד עוקבים</label>
+          <input type="number" id="goalFollowers" value="16000">
+        </div>
+        <div class="calc-field">
+          <label>צמיחה חודשית (%)</label>
+          <input type="number" id="growthRate" value="15">
+        </div>
+        <div class="calc-field">
+          <label>רילס בשבוע</label>
+          <select id="reelsPerWeek">
+            <option value="3">3 רילס</option>
+            <option value="4" selected>4 רילס</option>
+            <option value="5">5 רילס</option>
+          </select>
+        </div>
+        <button class="calc-btn" onclick="calcGrowth()">חשב</button>
+      </div>
+
+      <div class="calc-grid" id="calcResults">
+        <div class="calc-box">
+          <div class="calc-label">חסר לך</div>
+          <div class="calc-val" id="r-gap">13,525</div>
+          <div class="calc-unit">עוקבים</div>
+        </div>
+        <div class="calc-box">
+          <div class="calc-label">זמן להגעה ליעד</div>
+          <div class="calc-val" id="r-months">14.2</div>
+          <div class="calc-unit">חודשים</div>
+        </div>
+        <div class="calc-box">
+          <div class="calc-label">צמיחה ממוצעת/חודש</div>
+          <div class="calc-val" id="r-monthly">371</div>
+          <div class="calc-unit">עוקבים</div>
+        </div>
+        <div class="calc-box">
+          <div class="calc-label">רילס עד ליעד</div>
+          <div class="calc-val" id="r-reels">228</div>
+          <div class="calc-unit">רילס</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">ציר זמן חודשי</div>
+        <div class="timeline" id="calcTimeline"></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> השוואת תרחישים</div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="chartScenario"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--accent3)"></span> ציוני דרך</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <div>
+              <div style="font-size:13px;font-weight:600">3,000 עוקבים</div>
+              <div style="font-size:11px;color:var(--muted)">פיצ'רים מורחבים + Analytics</div>
+            </div>
+            <div style="font-size:12px;color:var(--accent)">~2 חודשים</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <div>
+              <div style="font-size:13px;font-weight:600">5,000 עוקבים</div>
+              <div style="font-size:11px;color:var(--muted)">Link in Story + Paid Collabs מתחילים</div>
+            </div>
+            <div style="font-size:12px;color:var(--accent)">~5 חודשים</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <div>
+              <div style="font-size:13px;font-weight:600">10,000 עוקבים</div>
+              <div style="font-size:11px;color:var(--muted)">Verified checkmark + Brand deals</div>
+            </div>
+            <div style="font-size:12px;color:var(--accent)">~9 חודשים</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--viral)">16,000 עוקבים 🎯</div>
+              <div style="font-size:11px;color:var(--muted)">יעד — Community + Digital Product</div>
+            </div>
+            <div style="font-size:12px;color:var(--viral)">~14 חודשים</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ===== DATA =====
+const posts = [
+  { rank: 1, hook: 'תוכן אנטומי/שרירי — ביצוע ויזואלי', cat: 'edu', views: 292000, viral: true },
+  { rank: 2, hook: 'לפני שנה מהיום — טרנספורמציה (Pinned)', cat: 'transform', views: 167000, viral: true },
+  { rank: 3, hook: 'סיפור אישי / כנות (טקסט כבד)', cat: 'mindset', views: 51100, viral: true },
+  { rank: 4, hook: 'מיכל vs רות — הומור + כאן FOMO', cat: 'collab', views: 49100, viral: true },
+  { rank: 5, hook: 'מוטיבציה / מיינדסט — מסר חזק', cat: 'mindset', views: 46500, viral: true },
+  { rank: 6, hook: 'תתזוז. לחץ בבקשה — הומור מכון', cat: 'humor', views: 34300, viral: true },
+  { rank: 7, hook: 'לכפעמים למשקל 200 ק"ק — מוטיבציה', cat: 'mindset', views: 16500 },
+  { rank: 8, hook: 'אחרי vs לפני בישול (קלוריות)', cat: 'food', views: 12200 },
+  { rank: 9, hook: 'אז איך עובד התהליך בעצם (Pinned)', cat: 'edu', views: 7999 },
+  { rank: 10, hook: 'בנות, תחזרו — הומור שרירים', cat: 'humor', views: 9708 },
+  { rank: 11, hook: 'POV גימנסיה — כשאתה בא לחוץ', cat: 'humor', views: 9082 },
+  { rank: 12, hook: 'האימון "הקל" שלי', cat: 'humor', views: 9073 },
+  { rank: 13, hook: 'PRO MEAT — מדריך בשר', cat: 'food', views: 7927 },
+  { rank: 14, hook: 'שינה / אימון / אכול — לימודים', cat: 'mindset', views: 7767 },
+  { rank: 15, hook: 'אם אתה גדול יותר ממישהו', cat: 'mindset', views: 7605 },
+  { rank: 16, hook: 'לפי העין — תוכן קלוריות', cat: 'food', views: 6003 },
+  { rank: 17, hook: 'בורקס מפוצץ חלבון!!', cat: 'food', views: 6652 },
+  { rank: 18, hook: 'Social media: — הומור אירוני', cat: 'humor', views: 6477 },
+  { rank: 19, hook: 'שאלון כח לאלמון — הומור חתיכות', cat: 'humor', views: 6396 },
+  { rank: 20, hook: 'סל קניות זול ומדויק!', cat: 'food', views: 5100 },
+];
+
+const catLabels = { humor: 'הומור', transform: 'טרנספורמציה', food: 'אוכל/תזונה', mindset: 'מיינדסט', edu: 'חינוך', collab: 'קולאב' };
+const catClasses = { humor: 'cat-humor', transform: 'cat-transform', food: 'cat-food', mindset: 'cat-mindset', edu: 'cat-edu', collab: 'cat-collab' };
+const catColors = ['#e67e22','#2ecc71','#e74c3c','#9b59b6','#3498db','#c8a96e'];
+const catNames = ['הומור','טרנספורמציה','אוכל/תזונה','מיינדסט','חינוך','קולאב'];
+
+// ===== RENDER TABLE =====
+function renderTable() {
+  const tbody = document.getElementById('postsTableBody');
+  const maxViews = Math.max(...posts.map(p => p.views));
+  posts.forEach(p => {
+    const badgeClass = p.rank === 1 ? 'rank-1' : p.rank === 2 ? 'rank-2' : p.rank === 3 ? 'rank-3' : 'rank-other';
+    const viewsK = p.views >= 1000 ? (p.views/1000).toFixed(1)+'K' : p.views;
+    const barW = Math.round((p.views / maxViews) * 100);
+    tbody.innerHTML += `
+      <tr>
+        <td><span class="rank-badge ${badgeClass}">${p.rank}</span></td>
+        <td>
+          ${p.viral ? '<span class="viral-badge">VIRAL</span>' : ''}
+          ${p.hook}
+        </td>
+        <td><span class="category-tag ${catClasses[p.cat]}">${catLabels[p.cat]}</span></td>
+        <td style="font-weight:700;font-size:14px;color:${p.viral ? 'var(--viral)' : 'var(--text)'}">${viewsK}</td>
+        <td style="min-width:100px">
+          <div class="views-bar-bg"><div class="views-bar" style="width:${barW}%"></div></div>
+        </td>
+      </tr>`;
+  });
+}
+
+// ===== CHARTS =====
+function initCharts() {
+  // Bar chart — top 12 (excluding virals)
+  const regular = posts.filter(p => !p.viral).slice(0, 12);
+  const barCtx = document.getElementById('chartBar').getContext('2d');
+  new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: regular.map(p => p.hook.length > 22 ? p.hook.slice(0,22)+'…' : p.hook),
+      datasets: [{
+        data: regular.map(p => p.views),
+        backgroundColor: regular.map((_, i) => `hsla(${200 + i*10}, 60%, 60%, 0.7)`),
+        borderColor: regular.map((_, i) => `hsla(${200 + i*10}, 70%, 65%, 1)`),
+        borderWidth: 1, borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7a7a8c', font: { size: 10 } } },
+        y: { grid: { display: false }, ticks: { color: '#c8c8d0', font: { size: 10 } } }
+      }
+    }
+  });
+
+  // Pie chart — categories
+  const catCount = {};
+  posts.forEach(p => { catCount[p.cat] = (catCount[p.cat] || 0) + 1; });
+  const pieLabels = Object.keys(catCount).map(k => catLabels[k]);
+  const pieData = Object.values(catCount);
+  const pieColors = ['#e67e22','#2ecc71','#e74c3c','#9b59b6','#3498db','#c8a96e'];
+  const pieCtx = document.getElementById('chartPie').getContext('2d');
+  new Chart(pieCtx, {
+    type: 'doughnut',
+    data: {
+      labels: pieLabels,
+      datasets: [{ data: pieData, backgroundColor: pieColors, borderWidth: 2, borderColor: '#13131a' }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  // Pie legend
+  const legend = document.getElementById('pieLegend');
+  pieLabels.forEach((l, i) => {
+    const pct = Math.round((pieData[i] / posts.length) * 100);
+    legend.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${pieColors[i]}"></div>${l}<span class="legend-pct">${pct}%</span></div>`;
+  });
+
+  // Scenario chart
+  const months = Array.from({length: 15}, (_, i) => `חודש ${i+1}`);
+  function growScenario(rate) {
+    let f = 2475; return months.map(() => { f = Math.round(f * (1 + rate/100)); return f; });
+  }
+  const sCtx = document.getElementById('chartScenario').getContext('2d');
+  new Chart(sCtx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'אגרסיבי (25%/חודש)', data: growScenario(25), borderColor: '#e67e22', fill: false, tension: 0.4, pointRadius: 0 },
+        { label: 'ממוצע (15%/חודש)', data: growScenario(15), borderColor: '#c8a96e', fill: false, tension: 0.4, pointRadius: 0 },
+        { label: 'שמרני (8%/חודש)', data: growScenario(8), borderColor: '#7a7a8c', fill: false, tension: 0.4, pointRadius: 0, borderDash: [4,4] },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#c8c8d0', font: { size: 11 }, boxWidth: 16 } } },
+      scales: {
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#7a7a8c', font: { size: 10 } },
+          min: 0
+        },
+        x: { grid: { display: false }, ticks: { color: '#7a7a8c', font: { size: 9 } } }
+      }
+    }
+  });
+}
+
+// ===== GROWTH CALC =====
+function calcGrowth() {
+  const cur = parseInt(document.getElementById('currentFollowers').value) || 2475;
+  const goal = parseInt(document.getElementById('goalFollowers').value) || 16000;
+  const rate = parseFloat(document.getElementById('growthRate').value) || 15;
+  const rpw = parseInt(document.getElementById('reelsPerWeek').value) || 4;
+
+  let f = cur; let months = 0;
+  while (f < goal && months < 120) { f = Math.round(f * (1 + rate/100)); months++; }
+
+  const gap = goal - cur;
+  const monthly = Math.round(gap / months);
+  const reels = Math.round(months * 4.3 * rpw);
+
+  document.getElementById('r-gap').textContent = gap.toLocaleString();
+  document.getElementById('r-months').textContent = months;
+  document.getElementById('r-monthly').textContent = monthly.toLocaleString();
+  document.getElementById('r-reels').textContent = reels.toLocaleString();
+
+  // Timeline
+  const tl = document.getElementById('calcTimeline');
+  tl.innerHTML = '';
+  let ff = cur;
+  const steps = Math.min(months, 12);
+  for (let i = 1; i <= steps; i++) {
+    ff = Math.round(ff * (1 + rate/100));
+    tl.innerHTML += `<div class="timeline-step">
+      <div class="ts-month">חודש ${i}</div>
+      <div class="ts-val">${ff >= 1000 ? (ff/1000).toFixed(1)+'K' : ff}</div>
+    </div>`;
+  }
+  if (months > 12) {
+    tl.innerHTML += `<div class="timeline-step">
+      <div class="ts-month">חודש ${months}</div>
+      <div class="ts-val" style="color:var(--viral)">${(goal/1000).toFixed(0)}K 🎯</div>
+    </div>`;
+  }
+}
+
+// ===== TABS =====
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== CHECKIN =====
+function getCheckins() {
+  try { return JSON.parse(localStorage.getItem('aviel_checkins') || '[]'); } catch(e) { return []; }
+}
+function saveCheckin() {
+  const templates = Array.from(document.querySelectorAll('#ci-templates input:checked')).map(c => c.value);
+  const entry = {
+    date: new Date().toLocaleDateString('he-IL'),
+    reels: document.getElementById('ci-reels').value,
+    templates: templates,
+    followers: document.getElementById('ci-followers').value || null,
+    best: document.getElementById('ci-best').value || null,
+    mood: document.getElementById('ci-mood').value,
+    blocker: document.getElementById('ci-blocker').value || ''
+  };
+  const all = getCheckins();
+  all.unshift(entry);
+  localStorage.setItem('aviel_checkins', JSON.stringify(all.slice(0, 52)));
+  document.getElementById('ci-saved').style.display = 'block';
+  renderCheckins();
+}
+function renderCheckins() {
+  const all = getCheckins();
+  const el = document.getElementById('ci-history');
+  if (!all.length) return;
+  el.innerHTML = all.map((c, i) => {
+    const prev = all[i+1];
+    const growth = (prev && c.followers && prev.followers) ? (c.followers - prev.followers) : null;
+    const growthTxt = growth === null ? '' : (growth >= 0 ? `<span style="color:#2ecc71">+${growth} עוקבים</span>` : `<span style="color:#e74c3c">${growth} עוקבים</span>`);
+    const onTarget = parseInt(c.reels) >= 3;
+    return `<div style="padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700">
+        <span>${c.date}</span>
+        <span style="color:${onTarget ? '#2ecc71' : '#f1c40f'}">${c.reels} רילסים ${onTarget ? '✅' : '⚠️'}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">
+        ${c.followers ? c.followers + ' עוקבים ' : ''}${growthTxt}
+        ${c.best ? ' · שיא: ' + Number(c.best).toLocaleString() + ' צפיות' : ''}
+        · הרגשה: ${c.mood}/10
+        ${c.templates.length ? '<br>תבניות: ' + c.templates.join(', ') : ''}
+        ${c.blocker ? '<br>חסם: ' + c.blocker : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function copyCheckinSummary() {
+  const all = getCheckins();
+  if (!all.length) { alert('אין עדיין צ\'ק-אין לשלוח — מלא אחד קודם'); return; }
+  const c = all[0];
+  const txt = `צ'ק-אין שבועי מהדשבורד (${c.date}):\n- רילסים שהעליתי: ${c.reels}\n- תבניות: ${c.templates.join(', ') || 'לא סומן'}\n- עוקבים: ${c.followers || 'לא מולא'}\n- שיא צפיות השבוע: ${c.best || 'לא מולא'}\n- הרגשה: ${c.mood}/10\n- חסם: ${c.blocker || 'אין'}\nתעבור על זה ותגיד לי מה לשפר לשבוע הבא.`;
+  navigator.clipboard.writeText(txt).then(() => alert('הסיכום הועתק! הדבק אצל קלוד 📋'));
+}
+
+// ===== INIT =====
+renderTable();
+initCharts();
+calcGrowth();
+renderCheckins();
+
+// ===== PASSWORD GATE =====
+(async function gate() {
+  // hash of the password — the password itself does not appear in the source
+  const OK_HASH = 'b6a50d038c5fb2c18b37d56725ba6048ec9316a265d9c24a57846c7129c03570';
+  async function sha256(s) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  if (sessionStorage.getItem('aviel_gate') === OK_HASH) return;
+  document.body.style.visibility = 'hidden';
+  let tries = 0;
+  while (tries < 5) {
+    const pw = prompt('🔒 דשבורד פרטי — הכנס סיסמה:');
+    if (pw === null) { tries++; continue; }
+    if (await sha256(pw.trim()) === OK_HASH) {
+      sessionStorage.setItem('aviel_gate', OK_HASH);
+      document.body.style.visibility = 'visible';
+      return;
+    }
+    tries++;
+  }
+  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#888;font-family:sans-serif;font-size:18px">🔒 גישה נדחתה</div>';
+  document.body.style.visibility = 'visible';
+})();
+</script>
+</body>
+</html>
