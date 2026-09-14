@@ -1312,7 +1312,7 @@ renderCheckins();
 // ===== PASSWORD GATE =====
 (async function gate() {
   // hash of the password — the password itself does not appear in the source
-  const OK_HASH = 'b6a50d038c5fb2c18b37d56725ba6048ec9316a265d9c24a57846c7129c03570';
+  const OK_HASH = '4a6e9e302171f1d4f744d44cd88adda3ef01b3490237d3fb76c18dc1797a9380';
   async function sha256(s) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
